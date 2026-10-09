@@ -32,7 +32,7 @@ private:
     static int nopr;
 public:
     Product();
-    Product(int,int,int,int*,int,float,string,int,int,int,Supplier);
+    Product(int,int,int,int*,int,float,string,int,int,int,double,int,string);
     Product(const Product&);
     ~Product();
 
@@ -49,13 +49,14 @@ public:
     int getExistence();
     int getNumberofMovements();
     int getDynamicHistory();
-    float getCost();
-    string getName();
+    inline float getCost();
+    inline string getName();
     Date getEntryDate();
     Supplier getSupplier();
+    static int getNumberofProducts();
 
-    void IncreaseExistence(int);
-    void sell();
+    int IncreaseExistence();
+    int sell();
     void show();
     void showMovements();
 
@@ -83,7 +84,7 @@ Product::Product(){
     nopr++;
 }
 
-Product::Product(int code,int ex,int nomv,int* dnh,int n,float cost ,string name,int dd, int mm, int yy,Supplier s){
+Product::Product(int code,int ex,int nomv,int* dnh,int n,float cost ,string name,int dd, int mm, int yy,double cid,int id,string nam){
     this->n=n;
     dinh=new int[n];
     for(int i=0 ; i<n ; i++){
@@ -97,4 +98,113 @@ Product::Product(int code,int ex,int nomv,int* dnh,int n,float cost ,string name
     entryDate.day=dd;
     entryDate.month=mm;
     entryDate.year=yy;
+    supplier.setCallID(cid);
+    supplier.setID(id);
+    supplier.setSupplierName(nam);
+    nopr++;
+}
+
+Product::Product(const Product& copy){
+    this->code=copy.code;
+    this->cost=copy.cost;
+    this->dinh=copy.dinh;
+    this->n=copy.n;
+    dinh=new int[n];
+    this->entryDate=copy.entryDate;
+    this->existence=copy.existence;
+    this->name=copy.name;
+    this->supplier=copy.supplier;
+    this->nomv=copy.nomv;
+    nopr++;
+}
+
+Product::~Product(){
+    delete []dinh;
+    nopr--;
+}
+
+void Product::setCode(int code){
+    this->code=code;
+}
+
+void Product::setCost(float c){
+    cost=c;
+}
+
+void Product::setDynamicHistory(int* vec, int n){
+    vec=dinh;
+    this->n=n;
+    dinh=new int[n];
+}
+
+void Product::setEntryDate(int dd, int mm, int yy){
+    entryDate.day=dd;
+    entryDate.month=mm;
+    entryDate.year=yy;
+}
+
+void Product::setExistence(int ex){
+    existence=ex;
+}
+
+void Product::setName(string n){
+    name=n;
+}
+
+void Product::setNumberofMovements(int numm){
+    nomv=numm;
+}
+
+void Product::setSupplier(string name, int id, double cid){
+    supplier.setCallID(cid);
+    supplier.setID(id);
+    supplier.setSupplierName(name);
+}
+
+int Product::getCode(){
+    return code;
+}
+
+float Product::getCost(){
+    return cost;
+}
+
+int Product::getExistence(){
+    return existence;
+}
+
+int Product::getNumberofMovements(){
+    return nomv;
+}
+
+string Product::getName(){
+    return name;
+}
+
+Date Product::getEntryDate(){
+    return entryDate;
+}
+
+int Product::getNumberofProducts(){
+    return nopr;
+}
+
+int Product::IncreaseExistence(){
+    int plus;
+    cout<<endl<<"How many existence for increase? ";
+    cin>>plus;
+    existence=existence+plus;
+    return existence;
+}
+
+int Product::sell(){
+    int plus;
+    cout<<endl<<"How many existence for sell? ";
+    cin>>plus;
+    existence=existence-plus;
+    return existence;
+}
+
+void Product::show(){
+    
 }
