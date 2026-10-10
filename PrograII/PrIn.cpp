@@ -6,7 +6,7 @@ struct Date{
     int day, month, year;
 };
 
-void CompareExistence();
+void CompareExistence(Product, Product);
 
 class Product{
 private:
@@ -20,13 +20,25 @@ private:
         int id;
         double callId;
     public:
-        void setSupplierName(string);
-        void setID(int);
-        void setCallID(double);
+        void setSupplierName(string name){
+            sname=name;
+        }
+        void setID(int id){
+            this->id=id;
+        }
+        void setCallID(double cid){
+            callId=cid;
+        }
 
-        string getSupplierName();
-        int getID();
-        double getCallID();
+        string getSupplierName(){
+            return sname;
+        }
+        int getID(){
+            return id;
+        }
+        double getCallID(){
+            return callId;
+        }
     };
     Supplier supplier;
     static int nopr;
@@ -48,11 +60,13 @@ public:
     int getCode();
     int getExistence();
     int getNumberofMovements();
-    int getDynamicHistory();
+    int* getDynamicHistory();
     inline float getCost();
     inline string getName();
     Date getEntryDate();
-    Supplier getSupplier();
+    Supplier getSupplier(){
+        return supplier;
+    }
     static int getNumberofProducts();
 
     int IncreaseExistence();
@@ -60,7 +74,7 @@ public:
     void show();
     void showMovements();
 
-    friend void CompareExistence();
+    friend void CompareExistence(Product, Product);
 
 };
 
@@ -107,9 +121,11 @@ Product::Product(int code,int ex,int nomv,int* dnh,int n,float cost ,string name
 Product::Product(const Product& copy){
     this->code=copy.code;
     this->cost=copy.cost;
-    this->dinh=copy.dinh;
     this->n=copy.n;
     dinh=new int[n];
+    for(int i = 0; i < n; i++) {
+        dinh[i] = copy.dinh[i];
+    }
     this->entryDate=copy.entryDate;
     this->existence=copy.existence;
     this->name=copy.name;
@@ -188,6 +204,9 @@ Date Product::getEntryDate(){
 int Product::getNumberofProducts(){
     return nopr;
 }
+int* Product::getDynamicHistory(){
+    return dinh;
+}
 
 int Product::IncreaseExistence(){
     int plus;
@@ -206,5 +225,30 @@ int Product::sell(){
 }
 
 void Product::show(){
+    cout<<endl<<"Product: "<<name<<endl<<"Product Code: "<<code<<endl
+    <<"Existence: "<<existence<<endl<<"Cost: "<<cost<<endl
+    <<"Entry Date: "<<entryDate.month<<"/"<<entryDate.day<<"/"<<entryDate.year
+    <<endl<<"Number of Movements: "<<nomv;
+}
+
+void Product::showMovements(){
+    for(int i=0 ; i<nomv ; i++){
+        cout<<endl<<"Dynamic Hystory: "<<"Movement "<<i<<": "<<dinh[i];
+    }
+}
+
+void CompareExistence(Product p1, Product p2){
+    if(p1.getExistence()>p2.getExistence()){
+        cout<<endl<<"The existence in product 1 is mayor.";
+    }else if (p1.getExistence()<p2.getExistence())
+    {
+        cout<<endl<<"The existence in product 2 is mayor.";
+    }else{
+        cout<<endl<<"The existence in the two products is the same";
+    }
     
+}
+
+int main(){
+    Product *chettos, penguins, doritos;
 }
