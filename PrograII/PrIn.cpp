@@ -6,7 +6,17 @@ struct Date{
     int day, month, year;
 };
 
+class Product;
+
 void CompareExistence(Product, Product);
+
+class InventoryAuditor{
+private: 
+
+public:
+    InventoryAuditor();
+    void ProductCheck(const Product&);
+};
 
 class Product{
 private:
@@ -30,13 +40,13 @@ private:
             callId=cid;
         }
 
-        string getSupplierName(){
+        string getSupplierName() const{
             return sname;
         }
-        int getID(){
+        int getID() const{
             return id;
         }
-        double getCallID(){
+        double getCallID() const{
             return callId;
         }
     };
@@ -57,26 +67,29 @@ public:
     void setEntryDate(int,int,int);
     void setSupplier(string,int,double);
 
-    int getCode();
-    int getExistence();
-    int getNumberofMovements();
-    int* getDynamicHistory();
-    inline float getCost();
-    inline string getName();
-    Date getEntryDate();
-    Supplier getSupplier(){
+    int getCode() const;
+    int getExistence() const;
+    int getNumberofMovements() const;
+    int* getDynamicHistory() const;
+    inline float getCost() const;
+    inline string getName() const;
+    Date getEntryDate() const;
+    Supplier getSupplier() const{
         return supplier;
     }
     static int getNumberofProducts();
 
     int IncreaseExistence();
     int sell();
-    void show();
-    void showMovements();
+    void show() const;
+    void showMovements() const;
 
     friend void CompareExistence(Product, Product);
+    friend InventoryAuditor;
 
 };
+
+int Product::nopr=0;
 
 Product::Product(){
     n=100;
@@ -139,6 +152,10 @@ Product::~Product(){
     nopr--;
 }
 
+InventoryAuditor::InventoryAuditor(){
+
+}
+
 void Product::setCode(int code){
     this->code=code;
 }
@@ -177,40 +194,40 @@ void Product::setSupplier(string name, int id, double cid){
     supplier.setSupplierName(name);
 }
 
-int Product::getCode(){
+int Product::getCode() const{
     return code;
 }
 
-float Product::getCost(){
+float Product::getCost() const{
     return cost;
 }
 
-int Product::getExistence(){
+int Product::getExistence() const{
     return existence;
 }
 
-int Product::getNumberofMovements(){
+int Product::getNumberofMovements() const{
     return nomv;
 }
 
-string Product::getName(){
+string Product::getName() const{
     return name;
 }
 
-Date Product::getEntryDate(){
+Date Product::getEntryDate() const{
     return entryDate;
 }
 
 int Product::getNumberofProducts(){
     return nopr;
 }
-int* Product::getDynamicHistory(){
+int* Product::getDynamicHistory() const{
     return dinh;
 }
 
 int Product::IncreaseExistence(){
     int plus;
-    cout<<endl<<"How many existence for increase? ";
+    cout<<endl<<"How many existence for increase in "<<name<<"? ";
     cin>>plus;
     existence=existence+plus;
     return existence;
@@ -218,23 +235,28 @@ int Product::IncreaseExistence(){
 
 int Product::sell(){
     int plus;
-    cout<<endl<<"How many existence for sell? ";
+    cout<<endl<<"How many existence for sell in "<<name<<"? ";
     cin>>plus;
     existence=existence-plus;
     return existence;
 }
 
-void Product::show(){
+void Product::show() const{
     cout<<endl<<"Product: "<<name<<endl<<"Product Code: "<<code<<endl
     <<"Existence: "<<existence<<endl<<"Cost: "<<cost<<endl
     <<"Entry Date: "<<entryDate.month<<"/"<<entryDate.day<<"/"<<entryDate.year
     <<endl<<"Number of Movements: "<<nomv;
 }
 
-void Product::showMovements(){
+void Product::showMovements() const{
     for(int i=0 ; i<nomv ; i++){
-        cout<<endl<<"Dynamic Hystory: "<<"Movement "<<i<<": "<<dinh[i];
+        cout<<endl<<"Dynamic Hystory: "<<"Movement "<<i+1<<": "<<dinh[i];
     }
+}
+
+void InventoryAuditor::ProductCheck(const Product& p){
+    cout<<endl<<"====Auditor===="<<endl<< "Name of product: "<<p.name<<endl
+    <<"Code of product: "<<p.code<<endl<<"Existence: "<<p.existence;
 }
 
 void CompareExistence(Product p1, Product p2){
@@ -250,5 +272,76 @@ void CompareExistence(Product p1, Product p2){
 }
 
 int main(){
-    Product *chettos, penguins, doritos;
+    cout << "=== MANDATORY TESTS ===" << endl;
+
+    cout << endl << "1. Initial products count: " << Product::getNumberofProducts();
+
+    Product penguins;
+
+    penguins.setCode(1001);
+    penguins.setName("Penguins");
+    penguins.setExistence(50);
+    penguins.setCost(18.5f);
+    penguins.setEntryDate(15, 6, 2026);
+    penguins.setSupplier("Bimbo", 501, 5551234.5);
+    penguins.setNumberofMovements(2);
+    int hist1[2] = {10, 40};
+    penguins.setDynamicHistory(hist1, 2);
+
+    int hist2[3] = {5, 15, 10};
+    Product doritos(1002, 30, 3, hist2, 3, 25.0f, "Doritos", 20, 6, 2026, 5559876.1, 502, "Sabritas");
+
+    penguins.IncreaseExistence(); 
+    penguins.sell();              
+    doritos.IncreaseExistence(); 
+
+    cout << endl << "6. Showing data:";
+    penguins.show();
+    penguins.showMovements();
+    doritos.show();
+    doritos.showMovements();
+
+    Product pCopia(penguins);
+    pCopia.setName("Penguins Modified");
+    pCopia.setExistence(999);
+    cout << endl << "8. Original penguins: " << penguins.getExistence() << " | Copy: " << pCopia.getExistence();
+
+    cout << endl << "9. Static counter: " << Product::getNumberofProducts();
+
+    const Product pConst(1003, 100, 0, nullptr, 0, 10.0f, "Water", 1, 1, 2026, 5550000.0, 503, "Bonafont");
+    cout << endl << "10. Const object name: " << pConst.getName();
+    pConst.show();
+
+    CompareExistence(penguins, doritos);
+
+    InventoryAuditor auditor;
+    auditor.ProductCheck(penguins);
+
+    Product *chettos = new Product(1004, 75, 0, nullptr, 0, 45.0f, "Cheetos", 21, 6, 2026, 5551111.0, 504, "Sabritas");
+    cout << endl << "14. Dynamic object chettos:";
+    chettos->show();
+
+    cout << endl << "15. Counter before delete: " << Product::getNumberofProducts();
+    delete chettos;
+    cout << endl << "17. Counter after delete: " << Product::getNumberofProducts();
+
+    int cant;
+    cout << endl << "18. Enter quantity for dynamic array: ";
+    cin >> cant;
+
+    Product *arrProd = new Product[cant];
+    for(int i = 0; i < cant; i++){
+        arrProd[i].setCode(3000 + i);
+        arrProd[i].setName("Batch " + to_string(i + 1));
+    }
+
+    cout << endl << "21. Showing dynamic array catalog:";
+    for(int i = 0; i < cant; i++){
+        arrProd[i].show();
+    }
+
+    delete [] arrProd;
+    cout << endl << "23. Final products counter: " << Product::getNumberofProducts() << endl;
+
+    return 0;
 }
